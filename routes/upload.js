@@ -18,7 +18,7 @@ let upload = multer({
 //单个文件上传
 router.post('/single', upload.single('recfile'), (req, res) => { //注意这个recfile  在前端上传时，input的name同样要写这个，才行。
     res.json({
-        code: '0',
+        code: 0,
         type: 'single',
         originalname: req.file.originalname,
         path: req.file.path

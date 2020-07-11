@@ -16,7 +16,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var articleRouter = require("./routes/article");
 var merchanctRouter = require("./routes/merchanct");
-const multerUpload = require('./routes/upload');
+var multerUpload = require('./routes/upload');
 
 
 // view engine setup
@@ -73,9 +73,9 @@ app.all('*', function(req, res, next) {
 // });
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/user", usersRouter);
 app.use("/article", articleRouter);
-app.use("/merchanct", merchanctRouter);
+app.use("/merchant", merchanctRouter);
 app.use('/upload', multerUpload);
 
 // catch 404 and forward to error handler

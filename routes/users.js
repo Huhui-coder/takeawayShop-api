@@ -10,13 +10,16 @@ const secret = "hit";
 require("../util/util");
 
 router.get("/test", userController.test);
-// 用户新建地址
-router.post("/addAddress", userController.addAddress);
 
-// 返回所有的用户地址
-router.get('/', userController.allAddress)
-// 根据用户手机号码，返回对应的地址信息
-router.get('/findAddressByPhone', userController.findAddressByPhone)
+//用户登录
+router.post("/login", userController.login);
+
+// 用户下单
+router.post("/order", userController.order);
+
+// 用户查看订单详情
+router.get("/order", userController.getOrder);
+
 
 // // 用户校验 中间件
 // let auth = function(req, res, next) {

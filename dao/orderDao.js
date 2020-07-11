@@ -1,5 +1,5 @@
 //封装CURD操作
-var merchanctModel = require('../models/merchanct');
+var orderModel = require('../models/order');
 
 module.exports = {
 	/**
@@ -9,7 +9,7 @@ module.exports = {
     save(data) {
         return new Promise((resolve, reject) => {
             //model.create(保存的对象,callback)
-            merchanctModel.create(data, (error, doc) => {
+            orderModel.create(data, (error, doc) => {
                 if (error) {
                     reject(error)
                 } else {
@@ -21,7 +21,7 @@ module.exports = {
     find(data = {}, fields = null, options = {}) {
         return new Promise((resolve, reject) => {
             //model.find(需要查找的对象(如果为空，则查找到所有数据), 属性过滤对象[可选参数], options[可选参数], callback)
-            merchanctModel.find(data, fields, options, (error, doc) => {
+            orderModel.find(data, fields, options, (error, doc) => {
                 if (error) {
                     reject(error)
                 } else {
@@ -33,7 +33,7 @@ module.exports = {
     findOne(data) {
         return new Promise((resolve, reject) => {
             //model.findOne(需要查找的对象,callback)
-            merchanctModel.findOne(data, (error, doc) => {
+            orderModel.findOne(data, (error, doc) => {
                 if (error) {
                     reject(error)
                 } else {
@@ -45,7 +45,7 @@ module.exports = {
     findById(data) {
         return new Promise((resolve, reject) => {
             //model.findById(需要查找的id对象 ,callback)
-            merchanctModel.findById(data, (error, doc) => {
+            orderModel.findById(data, (error, doc) => {
                 if (error) {
                     reject(error)
                 } else {
@@ -57,7 +57,7 @@ module.exports = {
     update(conditions, update) {
         return new Promise((resolve, reject) => {
             //model.update(查询条件,更新对象,callback)
-            merchanctModel.updateOne(conditions, update, (error, doc) => {
+            orderModel.updateOne(conditions, update, (error, doc) => {
                 if (error) {
                     reject(error)
                 } else {
@@ -69,7 +69,7 @@ module.exports = {
     remove(conditions) {
         return new Promise((resolve, reject) => {
             //model.update(查询条件,callback)
-            merchanctModel.remove(conditions, (error, doc) => {
+            orderModel.remove(conditions, (error, doc) => {
                 if (error) {
                     reject(error)
                 } else {

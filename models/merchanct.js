@@ -4,16 +4,20 @@
 //order => 订单表。存储用户信息，商品信息，订单状态，创建时间。
 var mongoose = require('mongoose')
 var merchantSchema = new mongoose.Schema({
-    userName: String,
-    userPwd: String,
     merchantName: String,
+    merchantPwd: String,
+    merchantAddress: String,
+    merchantPhone: String,
     merchantDesc: String,
     product: [{
         url: String,
         price: Number,
         desc: String,
         name: String,
-        status: String
+        status: {
+            type: String,
+            default: 'normal'
+        }
     }]
 })
 
