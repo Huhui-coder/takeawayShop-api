@@ -3,15 +3,14 @@ var mongoose = require('mongoose')
 var orderSchema = new mongoose.Schema({
     openid: String,
     merchantId: String,
-    userInfo: {
+    // numbering:String, // 订单编号舍弃，直接使用_id 后四位作为订单标识
+    userAddressInfo: {
         userName: String,
-        postalCode: Number,
         provinceName: String,
         cityName: String,
         countyName: String,
         detailInfo: String,
-        nationalCode: Number,
-        telNumber: Number
+        telNumber: String
     },
     remake: "",
     product: [{
@@ -19,11 +18,14 @@ var orderSchema = new mongoose.Schema({
         price: Number,
         desc: String,
         name: String,
-        status: String
+        status: String,
+        num: Number
     }],
+    total: String,
+    orderType: String,
     create_time: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
     status: {
         type: String,

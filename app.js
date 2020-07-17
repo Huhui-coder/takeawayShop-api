@@ -14,7 +14,6 @@ var upload = multer({ dest: 'uploads/' }) //当前目录下建立文件夹upload
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-var articleRouter = require("./routes/article");
 var merchanctRouter = require("./routes/merchanct");
 var multerUpload = require('./routes/upload');
 
@@ -32,7 +31,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "uploads")));
 
 //设置jwt密钥
-app.set("jwtTokenSecret", "qwert569263082@!");
+// app.set("jwtTokenSecret", "qwert569263082@!");
 
 //配置body-parser中间件
 // parse application/x-www-form-urlencoded
@@ -74,7 +73,6 @@ app.all('*', function(req, res, next) {
 
 app.use("/", indexRouter);
 app.use("/user", usersRouter);
-app.use("/article", articleRouter);
 app.use("/merchant", merchanctRouter);
 app.use('/upload', multerUpload);
 

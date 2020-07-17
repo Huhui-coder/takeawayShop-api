@@ -1,7 +1,16 @@
 var userDao = require('../../dao/userDao')
 var orderDao = require('../../dao/orderDao')
+var merchantDao = require('../../dao/merchantDao');
 
+// let numbering = 0000;
+
+const fn1 = function (num, length) {
+    return (num / Math.pow(10, length)).toFixed(length).substr(2);
+}
 class User {
+    fn1(num, length) {
+        return (num / Math.pow(10, length)).toFixed(length).substr(2);
+    }
     test(req, res, next) {
         res.json({
             code: 0,
@@ -14,7 +23,7 @@ class User {
     login(req, res, next) {
         // 首先获取 openid 查看数据库中有没有，没有就加上，并且返回的订单数据为空
         // 首先获取 openid 查看数据库中有没有，有就直接返回对应的订单数据
-        let { openid, session_key } = req.body
+        let { openid, session_key, merchantId } = req.body
         var params = {
             openid,
             session_key
@@ -24,19 +33,23 @@ class User {
             if (result.length === 0) {
                 userDao.save(params)
                     .then(result => {
-                        res.json({
-                            code: "0",
-                            msg: "登录成功",
-                            data: {}
-                        });
+                        req._id = merchantId
+                        next()
+                        // res.json({
+                        //     code: 0,
+                        //     msg: "登录成功",
+                        //     data: {}
+                        // });
                     })
             } else {
                 orderDao.find({ openid: openid }).then(result => {
-                    res.json({
-                        code: "0",
-                        msg: "查询成功",
-                        data: result
-                    });
+                    req._id = merchantId
+                    next()
+                    // res.json({
+                    //     code: 0,
+                    //     msg: "查询成功",
+                    //     data: result
+                    // });
                 })
             }
         })
@@ -45,21 +58,37 @@ class User {
         // 获取用户的openid, 获取订单数据,用户下单
         // 需要的参数 openid merchantId product, 地址，手机号等信息
         const params = req.body
+        // params.numbering = fn1(numbering + 1, 4)
+        // numbering += 1
         orderDao.save(params)
             .then(result => {
                 res.json({
-                    code: "0",
+                    code: 0,
                     msg: "下单成功",
                     data: result
                 });
             })
     }
     getOrder(req, res, next) {
+        // 需要的参数 _id
+        const { _id } = req.query
+        orderDao.find({ _id: _id }).then(result => {
+            merchantDao.find({ _id: result[0].merchantId }).then(merchantInfo => {
+                res.json({
+                    code: 0,
+                    msg: "查询成功",
+                    data: result[0],
+                    merchantInfo: merchantInfo[0]
+                });
+            })
+        })
+    }
+    getAllOrder(req, res, next) {
         // 需要的参数 o_id
-        const { o_id } = req.body
-        orderDao.find({ o_id: o_id }).then(result => {
+        const { openid } = req.query
+        orderDao.find({ openid: openid }).then(result => {
             res.json({
-                code: "0",
+                code: 0,
                 msg: "查询成功",
                 data: result
             });

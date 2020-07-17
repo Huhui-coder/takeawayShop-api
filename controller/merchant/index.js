@@ -1,24 +1,44 @@
 var userDao = require('../../dao/userDao')
 var orderDao = require('../../dao/orderDao')
 var merchantDao = require('../../dao/merchantDao');
+var jwt = require("jwt-simple"); //引入jwt中间件
 
+const secret = 'hit'
 class Merchant {
     login(req, res, next) {
         // 首先获取 merchantName 查看数据库中有没有，没有就加上，并且返回的订单数据为空
         // 首先获取 merchantName 查看数据库中有没有，有就直接返回对应的订单数据
         let params = req.body
         merchantDao.find({ merchantName: params.merchantName }).then(result => {
-            if (result[0].merchantPwd === params.merchantPwd) {
-                let data = result[0]
-                res.json({
-                    code: 0,
-                    msg: "登录成功",
-                    data: data
-                });
+            if(result.length > 0) {
+                if (result[0].merchantPwd === params.merchantPwd) {
+                    let data = result[0]
+                    let expires = Date.now() + 7 * 24 * 60 * 60 * 1000;
+                    let token = jwt.encode(
+                        {
+                            //编码
+                            _id: data._id,
+                            exp: expires
+                        },
+                        secret
+                    );
+                    res.json({
+                        code: 0,
+                        msg: "登录成功",
+                        data: data,
+                        token: token
+                    });
+                } else {
+                    res.json({
+                        code: 1,
+                        msg: "登录失败，账号或密码不正确",
+                        data: {}
+                    });
+                }
             } else {
                 res.json({
                     code: 1,
-                    msg: "登录失败，账号或密码不正确",
+                    msg: "该账号未注册",
                     data: {}
                 });
             }
@@ -52,9 +72,7 @@ class Merchant {
     addProduct(req, res, next) {
         // 首先获取商户_id, 直接在该商户列表下的product put 进去
         let params = req.body
-        let _id = params._id
-        console.log(params)
-        delete params._id
+        let _id = req._id
         merchantDao.update({ _id: _id }, { $push: { 'product': params } }).then(result => {
             if (result.nModified !== 0) {
                 res.json({
@@ -73,10 +91,11 @@ class Merchant {
         })
     }
     getAllProduct(req, res, next) {
-        let { _id } = req.query
+        let _id = req._id
         merchantDao.find({ _id: _id }).then(result => {
+            let data = result[0]
             if (result.length > 0) {
-                let data = result[0].product
+                console.log(result)
                 res.json({
                     code: 0,
                     msg: "查找成功",
@@ -92,7 +111,8 @@ class Merchant {
         })
     }
     getSingalProduct(req, res, next) {
-        let { _id, p_id } = req.query
+        let { p_id } = req.query
+        let _id = req._id
         merchantDao.find({ _id: _id }).then(result => {
             if (result.length > 0) {
                 let data = result[0].product
@@ -114,8 +134,8 @@ class Merchant {
     putStatusProduct(req, res, next) {
         // 首先获取商户_id, 直接在该商户列表下的product put 进去
         let params = req.body
-        let { _id, p_id, status } = params
-        delete params._id
+        let {  p_id, status } = params
+        let _id = req._id
         delete params.p_id
         merchantDao.find({ _id: _id }).then(result => {
             result[0].product.map((item) => {
@@ -135,7 +155,8 @@ class Merchant {
 
     delProduct(req, res, next) {
         let params = req.body
-        merchantDao.update({ _id: params._id }, { $pull: { 'product': { _id: params.p_id } } }).then(result => {
+        let _id = req._id
+        merchantDao.update({ _id: _id }, { $pull: { 'product': { _id: params.p_id } } }).then(result => {
             res.json({
                 code: 0,
                 msg: "删除成功",
@@ -147,9 +168,8 @@ class Merchant {
     putProduct(req, res, next) {
         // 首先获取商户_id, 直接在该商户列表下的product put 进去
         let params = req.body
-        let _id = params._id
+        let _id = req._id
         let p_id = params.p_id
-        delete params._id
         delete params.p_id
         merchantDao.find({ _id: _id }).then(result => {
             result[0].product.map((item) => {
@@ -169,7 +189,7 @@ class Merchant {
 
     allOrder(req, res, next) {
         // 需要一个参数，商户id
-        const { _id } = req.query
+        let _id = req._id
         orderDao.find({ merchantId: _id }).then(result => {
             if (result.length > 0) {
                 res.json({
@@ -194,6 +214,7 @@ class Merchant {
             }
         })
     }
+
     putOrder(req, res, next) {
         const { o_id, status } = req.body
         console.log(req.body)
@@ -205,5 +226,42 @@ class Merchant {
             });
         })
     }
+    // // 用户校验 中间件
+    auth(req, res, next) {
+        //post模拟时 添加Headers Authorization: Bearer token的值
+        let authorization = req.headers["authorization"];
+        if (authorization) {
+            let token = authorization.split(" ")[1];
+            try {
+                //看token是否合法，解码，如果串改过token就解不出来,进入异常页面
+                let data = jwt.decode(token, secret);
+                req._id = data._id; //后面就可以拿到user，中间件用法
+                next(); //下一步
+            } catch (error) {
+                console.log(error);
+                res.status(401).send("Not Allowed");
+            }
+        } else {
+            res.status(401).send("Not Allowed");
+        }
+    }
+    testToken(req, res, next) {
+        // 直接通过req._id 就能获取到商户的id了
+        res.json({
+            code: 0,
+            data: {
+                _id: req._id
+            }
+        });
+    }
+    // // 使用auth 验证
+    //   router.get("/token", auth, function(req, res, next) {
+    //     res.json({
+    //       code: 0,
+    //       data: {
+    //         user: req.user
+    //       }
+    //     });
+    //   });
 }
 module.exports = new Merchant()

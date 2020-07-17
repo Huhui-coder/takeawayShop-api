@@ -17,6 +17,15 @@ var merchantSchema = new mongoose.Schema({
         status: {
             type: String,
             default: 'normal'
+        },
+        pType: String, // 该字段表示分类名称
+        checked: {
+            type: Boolean,
+            default: false
+        },
+        num: {
+            type: Number,
+            default: 1
         }
     }]
 })

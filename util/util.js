@@ -14,4 +14,5 @@ Date.prototype.Format = function (fmt) {
     return fmt;
   }
   
-  module.exports = {};
+  module.exports = {
+  };
