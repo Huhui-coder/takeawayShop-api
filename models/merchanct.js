@@ -5,6 +5,8 @@
 var mongoose = require('mongoose')
 var merchantSchema = new mongoose.Schema({
     merchantName: String,
+    status: Boolean,
+    announcement: String,
     merchantPwd: String,
     merchantAddress: String,
     merchantPhone: String,

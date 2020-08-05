@@ -10,7 +10,7 @@ class Merchant {
         // 首先获取 merchantName 查看数据库中有没有，有就直接返回对应的订单数据
         let params = req.body
         merchantDao.find({ merchantName: params.merchantName }).then(result => {
-            if(result.length > 0) {
+            if (result.length > 0) {
                 if (result[0].merchantPwd === params.merchantPwd) {
                     let data = result[0]
                     let expires = Date.now() + 7 * 24 * 60 * 60 * 1000;
@@ -44,7 +44,32 @@ class Merchant {
             }
         })
     }
-
+    putUserInfo(req, res, next) {
+        // 首先获取商户_id, 直接在该商户列表下的product put 进去
+        let params = req.body
+        let _id = req._id
+        merchantDao.find({ _id: _id }).then(result => {
+            result[0] = Object.assign(result[0], params)
+            result[0].save(function () {
+                res.json({
+                    code: 0,
+                    msg: "更新成功",
+                    data: result
+                })
+            })
+        })
+    }
+    getUserInfo(req, res, next) {
+        // 首先获取商户_id, 直接在该商户列表下的product put 进去
+        let _id = req._id
+        merchantDao.find({ _id: _id }).then(result => {
+            res.json({
+                code: 0,
+                msg: "更新成功",
+                data: result[0]
+            })
+        })
+    }
     register(req, res, next) {
         // 注册时先查找 merchantName 商户名不能一样
         const params = req.body
@@ -134,7 +159,7 @@ class Merchant {
     putStatusProduct(req, res, next) {
         // 首先获取商户_id, 直接在该商户列表下的product put 进去
         let params = req.body
-        let {  p_id, status } = params
+        let { p_id, status } = params
         let _id = req._id
         delete params.p_id
         merchantDao.find({ _id: _id }).then(result => {

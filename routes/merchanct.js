@@ -12,6 +12,10 @@ router.get('/', function (req, res, next) {
 // 商户登录
 router.post("/login", merchantController.login);
 
+// 商户更改店铺信息
+router.put("/userInfo", merchantController.auth, merchantController.putUserInfo);
+router.get("/userInfo", merchantController.auth, merchantController.getUserInfo);
+
 // 商户注册
 router.post("/register", merchantController.register);
 
