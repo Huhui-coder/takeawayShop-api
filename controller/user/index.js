@@ -2,7 +2,7 @@ var userDao = require('../../dao/userDao')
 var orderDao = require('../../dao/orderDao')
 var merchantDao = require('../../dao/merchantDao');
 
-// let numbering = 0000;
+let numbering = 0000;
 
 const fn1 = function (num, length) {
     return (num / Math.pow(10, length)).toFixed(length).substr(2);
@@ -58,8 +58,8 @@ class User {
         // 获取用户的openid, 获取订单数据,用户下单
         // 需要的参数 openid merchantId product, 地址，手机号等信息
         const params = req.body
-        // params.numbering = fn1(numbering + 1, 4)
-        // numbering += 1
+        params.numbering = fn1(numbering + 1, 4)
+        numbering += 1
         orderDao.save(params)
             .then(result => {
                 res.json({

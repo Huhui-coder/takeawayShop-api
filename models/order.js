@@ -3,7 +3,8 @@ var mongoose = require('mongoose')
 var orderSchema = new mongoose.Schema({
     openid: String,
     merchantId: String,
-    // numbering:String, // 订单编号舍弃，直接使用_id 后四位作为订单标识
+    numbering:String, // 订单编号
+    mealTime: String, // 自取时的 取餐时间
     userAddressInfo: {
         userName: String,
         provinceName: String,
