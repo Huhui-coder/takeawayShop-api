@@ -18,7 +18,7 @@ module.exports = {
             })
         })
     },
-    find(data = {}, fields = null, options = {}) {
+    find(data = {}, fields = null, options = {sort: {'_id': -1}}) {
         return new Promise((resolve, reject) => {
             //model.find(需要查找的对象(如果为空，则查找到所有数据), 属性过滤对象[可选参数], options[可选参数], callback)
             userModel.find(data, fields, options, (error, doc) => {

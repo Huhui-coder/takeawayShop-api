@@ -117,8 +117,12 @@ class Merchant {
     }
     getAllProduct(req, res, next) {
         let _id = req._id
+        let { status } = req.query
         merchantDao.find({ _id: _id }).then(result => {
-            let data = result[0]
+            var data = result[0]
+            if (status) {
+                data = data.product.filter((item) => item.status === status)
+            }
             if (result.length > 0) {
                 console.log(result)
                 res.json({
@@ -215,12 +219,34 @@ class Merchant {
     allOrder(req, res, next) {
         // 需要一个参数，商户id
         let _id = req._id
-        orderDao.find({ merchantId: _id }).then(result => {
-            if (result.length > 0) {
+        let { status = '', orderType = '', startTime = '', endTime = '', pageSize = 10, pageIndex = 1 } = req.query
+        pageSize = Number(pageSize)
+        let skip = (pageIndex - 1) * pageSize
+        let query = {
+            merchantId: _id
+        }
+        if(status) query.status = status
+        if(startTime && endTime) query.create_time = {
+            "$gte": new Date(startTime)
+            , "$lt": new Date(endTime)
+        }
+        if(orderType) query.orderType = orderType
+        orderDao.find(query, null, { sort: { '_id': -1 }, limit: pageSize, skip: skip }).then(([doc,count]) => {
+            console.log(doc)
+            let data = doc
+            if (doc.length > 0) {
                 res.json({
                     code: 0,
                     msg: "查询成功",
-                    data: result
+                    data: data,
+                    meta: { count: count }
+                })
+            }else {
+                res.json({
+                    code: 0,
+                    msg: "查询失败",
+                    data: [],
+                    meta: { count: 0 }
                 })
             }
         })
