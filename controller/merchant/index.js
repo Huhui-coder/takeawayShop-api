@@ -255,12 +255,12 @@ class Merchant {
     order(req, res, next) {
         // 需要一个参数，订单 o_id
         const { o_id } = req.query
-        orderDao.find({ _id: o_id }).then(result => {
-            if (result.length > 0) {
+        orderDao.find({ _id: o_id }).then(([doc,count]) => {
+            if (doc.length > 0) {
                 res.json({
                     code: 0,
                     msg: "查询成功",
-                    data: result
+                    data: doc
                 })
             }
         })

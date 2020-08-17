@@ -54,23 +54,6 @@ app.all('*', function(req, res, next) {
     }
 });
 
-
-// app.all("/article", (req, res) => {
-//   // 获取token,这里默认是放在headers的authorization
-//   let token = req.headers.authorization;
-//   if (token) {
-//     let decoded = jwt.decode(token, app.get("jwtTokenSecret"));
-//     // 判断是否token已过期以及接收方是否为自己
-//     if (decoded.exp <= Date.now() || decoded.aud !== "hit") {
-//       res.sendStatus(401);
-//     } else {
-//       res.sendStatus(200);
-//     }
-//   } else {
-//     res.sendStatus(401);
-//   }
-// });
-
 app.use("/", indexRouter);
 app.use("/user", usersRouter);
 app.use("/merchant", merchanctRouter);
@@ -82,7 +65,7 @@ app.use(function(req, res, next) {
 });
 
 //连接MongoDB数据库
-mongoose.connect('mongodb://127.0.0.1:27017/takeawayShopApi');
+mongoose.connect('mongodb://47.103.12.90:27017/takeawayShopApi');
 
 mongoose.connection.on("connected", function() {
     console.log("MongoDB connected success.")

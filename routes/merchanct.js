@@ -19,7 +19,6 @@ router.get("/userInfo", merchantController.auth, merchantController.getUserInfo)
 // 商户注册
 router.post("/register", merchantController.register);
 
-
 // 商户新增商品
 router.post("/product", merchantController.auth, merchantController.addProduct);
 
@@ -38,14 +37,11 @@ router.put("/product", merchantController.auth, merchantController.putProduct);
 // 商户编辑商品状态
 router.put("/statusProduct", merchantController.auth, merchantController.putStatusProduct);
 
-
-
 // 商户查询所有订单
 router.get("/allOrder", merchantController.auth, merchantController.allOrder);
 
 // 商户查询单个订单详情
 router.get("/order", merchantController.auth, merchantController.order);
-
 
 // 商户编辑订单状态
 router.put("/order", merchantController.auth, merchantController.putOrder);

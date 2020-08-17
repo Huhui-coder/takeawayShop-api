@@ -7,26 +7,35 @@
 var app = require('../app');
 var debug = require('debug')('blog-api:server');
 var http = require('http');
-// const ipAddress = '192.168.0.102'
-const ipAddress = '127.0.0.1'
+var https = require('https');
+var fs = require("fs");
+// const ipAddress = '192.168.0.101'
+// const ipAddress = '127.0.0.1'
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort('3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const httpsOption = {
+  key: fs.readFileSync("./https/4361506_www.hit-coder.club.key"),
+  cert: fs.readFileSync('./https/4361506_www.hit-coder.club.pem')
+}
+
+// var server = https.createServer(httpsOption,app);
+// var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port, ipAddress);
+// server.listen(port, ipAddress);
+server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -84,6 +93,7 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
+console.log('addr', addr)
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;

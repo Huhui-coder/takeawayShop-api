@@ -72,12 +72,12 @@ class User {
     getOrder(req, res, next) {
         // 需要的参数 _id
         const { _id } = req.query
-        orderDao.find({ _id: _id }).then(result => {
-            merchantDao.find({ _id: result[0].merchantId }).then(merchantInfo => {
+        orderDao.find({ _id: _id }).then(([doc, count]) => {
+            merchantDao.find({ _id: doc[0].merchantId }).then(merchantInfo => {
                 res.json({
                     code: 0,
                     msg: "查询成功",
-                    data: result[0],
+                    data: doc[0],
                     merchantInfo: merchantInfo[0]
                 });
             })
@@ -86,11 +86,12 @@ class User {
     getAllOrder(req, res, next) {
         // 需要的参数 o_id
         const { openid } = req.query
-        orderDao.find({ openid: openid }).then(result => {
+        orderDao.find({ openid: openid }).then(([doc, count]) => {
             res.json({
                 code: 0,
                 msg: "查询成功",
-                data: result
+                data: doc,
+                meta: {count}
             });
         })
     }
