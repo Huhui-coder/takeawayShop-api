@@ -66,6 +66,7 @@ app.use(function(req, res, next) {
 
 //连接MongoDB数据库
 mongoose.connect('mongodb://47.103.12.90:27017/takeawayShopApi');
+// mongoose.connect('mongodb://127.0.0.1:27017/takeawayShopApi');
 
 mongoose.connection.on("connected", function() {
     console.log("MongoDB connected success.")

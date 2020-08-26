@@ -24,6 +24,8 @@ router.get("/order", userController.getOrder);
 // 用户查询订单列表
 router.get("/allOrder", userController.getAllOrder);
 
+// 打印机测试
+router.post("/print", userController.testPrint);
 
 
 
