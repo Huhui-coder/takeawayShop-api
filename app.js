@@ -63,10 +63,22 @@ app.use('/upload', multerUpload);
 app.use(function(req, res, next) {
     next(createError(404));
 });
-
+const MONGODB_URI = "mongodb://47.103.12.90:27017/takeawayShopApi?authSource=admin";
 //连接MongoDB数据库
-mongoose.connect('mongodb://47.103.12.90:27017/takeawayShopApi');
-// mongoose.connect('mongodb://127.0.0.1:27017/takeawayShopApi');
+mongoose.connect(MONGODB_URI, {
+  auth: {
+    user:'super',
+    password:'Qwerthuhui1997613!?'
+  },
+  useNewUrlParser:true
+}, function(err, client) {
+  if (err) {
+    console.log(err);
+  }
+  console.log('connect!!!');
+});
+// mongoose.connect('mongodb://super:Qwerthuhui1997613!?@47.103.12.90:27017');
+// mongoose.connect('mongodb://127.0.0.1:27017/takeawayShopApi');?authSource=admin
 
 mongoose.connection.on("connected", function() {
     console.log("MongoDB connected success.")

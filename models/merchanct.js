@@ -5,6 +5,10 @@
 var mongoose = require('mongoose')
 var merchantSchema = new mongoose.Schema({
     merchantName: String,
+	initNumbering: {
+		type: Number,
+		default: 0000
+	},
     shopName: String,
     status: Boolean,
     announcement: String,
@@ -12,6 +16,14 @@ var merchantSchema = new mongoose.Schema({
     merchantAddress: String,
     merchantPhone: String,
     merchantDesc: String,
+	limitPrice: {
+		type: Number,
+		default: 0
+	},
+	limitDistance: {
+		type: Number,
+		default: 1
+	},
     product: [{
         url: String,
         price: Number,

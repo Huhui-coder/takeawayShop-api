@@ -6,7 +6,8 @@
 
 var app = require('../app');
 var debug = require('debug')('blog-api:server');
-var http = require('http');
+//var http = require('http');
+var https = require('https');
 var fs = require("fs");
 /**
  * Get port from environment and store in Express.
@@ -19,14 +20,20 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-// var server = https.createServer(httpsOption,app);
-var server = http.createServer(app);
+const httpsOption = {
+  key: fs.readFileSync("./https/www.hit-coder.club.key"),
+  cert: fs.readFileSync('./https/www.hit-coder.club.pem')
+}
+
+ var server = https.createServer(httpsOption,app);
+// var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
 server.listen(port);
+console.log('port', port)
 server.on('error', onError);
 server.on('listening', onListening);
 

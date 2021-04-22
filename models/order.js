@@ -3,8 +3,17 @@ var mongoose = require('mongoose')
 var orderSchema = new mongoose.Schema({
     openid: String,
     merchantId: String,
+	isPay: {
+	    type: Boolean,
+	    default: false
+	},
     numbering:String, // 订单编号
+	orderidUUID: String, // 支付下单的订单编号
     mealTime: String, // 自取时的 取餐时间
+	isScheduled: {
+	    type: Boolean,
+	    default: false
+	},
     userAddressInfo: {
         userName: String,
         provinceName: String,
