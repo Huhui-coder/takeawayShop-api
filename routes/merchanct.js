@@ -5,8 +5,8 @@ var merchantController = require('../controller/merchant/index')
 
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', { title: 'hit123' });
+router.get('/', function(req, res, next) {
+    res.render('index', { title: 'hit123' });
 });
 
 // 商户登录
@@ -47,5 +47,9 @@ router.get("/order", merchantController.auth, merchantController.order);
 router.put("/order", merchantController.auth, merchantController.putOrder);
 
 router.post("/testToken", merchantController.auth, merchantController.testToken);
+
+// 商户发送邮件通知
+router.get("/attend", merchantController.auth, merchantController.attend);
+
 
 module.exports = router;

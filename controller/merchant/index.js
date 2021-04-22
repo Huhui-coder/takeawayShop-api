@@ -2,6 +2,17 @@ var userDao = require('../../dao/userDao')
 var orderDao = require('../../dao/orderDao')
 var merchantDao = require('../../dao/merchantDao');
 var jwt = require("jwt-simple"); //引入jwt中间件
+var nodemailer = require('nodemailer');
+
+var mailTransport = nodemailer.createTransport({
+    // host : 'smtp.qq.com',
+    // secureConnection: true, // use SSL
+    service: 'QQ',
+    auth: {
+        user: '569263082@qq.com',
+        pass: 'htlygiqrphoqbfdg'
+    },
+});
 
 const secret = 'hit'
 class Merchant {
@@ -14,8 +25,7 @@ class Merchant {
                 if (result[0].merchantPwd === params.merchantPwd) {
                     let data = result[0]
                     let expires = Date.now() + 7 * 24 * 60 * 60 * 1000;
-                    let token = jwt.encode(
-                        {
+                    let token = jwt.encode({
                             //编码
                             _id: data._id,
                             exp: expires
@@ -50,7 +60,7 @@ class Merchant {
         let _id = req._id
         merchantDao.find({ _id: _id }).then(result => {
             result[0] = Object.assign(result[0], params)
-            result[0].save(function () {
+            result[0].save(function() {
                 res.json({
                     code: 0,
                     msg: "更新成功",
@@ -172,7 +182,7 @@ class Merchant {
                     item.status = status
                 }
             })
-            result[0].save(function () {
+            result[0].save(function() {
                 res.json({
                     code: 0,
                     msg: "更新状态成功",
@@ -206,7 +216,7 @@ class Merchant {
                     item = Object.assign(item, params.form)
                 }
             })
-            result[0].save(function () {
+            result[0].save(function() {
                 res.json({
                     code: 0,
                     msg: "更新成功",
@@ -225,13 +235,13 @@ class Merchant {
         let query = {
             merchantId: _id
         }
-        if(status) query.status = status
-        if(startTime && endTime) query.create_time = {
-            "$gte": new Date(startTime)
-            , "$lt": new Date(endTime)
+        if (status) query.status = status
+        if (startTime && endTime) query.create_time = {
+            "$gte": new Date(startTime),
+            "$lt": new Date(endTime)
         }
-        if(orderType) query.orderType = orderType
-        orderDao.find(query, null, { sort: { '_id': -1 }, limit: pageSize, skip: skip }).then(([doc,count]) => {
+        if (orderType) query.orderType = orderType
+        orderDao.find(query, null, { sort: { '_id': -1 }, limit: pageSize, skip: skip }).then(([doc, count]) => {
             console.log(doc)
             let data = doc
             if (doc.length > 0) {
@@ -241,7 +251,7 @@ class Merchant {
                     data: data,
                     meta: { count: count }
                 })
-            }else {
+            } else {
                 res.json({
                     code: 0,
                     msg: "查询失败",
@@ -255,7 +265,7 @@ class Merchant {
     order(req, res, next) {
         // 需要一个参数，订单 o_id
         const { o_id } = req.query
-        orderDao.find({ _id: o_id }).then(([doc,count]) => {
+        orderDao.find({ _id: o_id }).then(([doc, count]) => {
             if (doc.length > 0) {
                 res.json({
                     code: 0,
@@ -267,17 +277,37 @@ class Merchant {
     }
 
     putOrder(req, res, next) {
-        const { o_id, status } = req.body
-        console.log(req.body)
-        orderDao.update({ _id: o_id }, { $set: { 'status': status } }).then(result => {
-            res.json({
-                code: 0,
-                msg: "更改订单状态成功",
-                data: result
+            const { o_id, status } = req.body
+            console.log(req.body)
+            orderDao.update({ _id: o_id }, { $set: { 'status': status } }).then(result => {
+                res.json({
+                    code: 0,
+                    msg: "更改订单状态成功",
+                    data: result
+                });
+            })
+        }
+        // 发送邮件
+    attend(req, res, next) {
+            const { email } = req.query
+            console.log(email)
+            var options = {
+                from: '"Hit" <569263082@qq.com>',
+                to: '"黄小姐" <3326743005@qq.com>',
+                subject: '你的订餐已经准备好了，请前往前台领取',
+                text: '你的订餐已经准备好了，请前往前台领取',
+                html: '<p>你的订餐已经准备好了，请前往前台领取</p>'
+            };
+
+            mailTransport.sendMail(options, function(err, msg) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(msg);
+                }
             });
-        })
-    }
-    // // 用户校验 中间件
+        }
+        // // 用户校验 中间件
     auth(req, res, next) {
         //post模拟时 添加Headers Authorization: Bearer token的值
         let authorization = req.headers["authorization"];
@@ -297,22 +327,22 @@ class Merchant {
         }
     }
     testToken(req, res, next) {
-        // 直接通过req._id 就能获取到商户的id了
-        res.json({
-            code: 0,
-            data: {
-                _id: req._id
-            }
-        });
-    }
-    // // 使用auth 验证
-    //   router.get("/token", auth, function(req, res, next) {
-    //     res.json({
-    //       code: 0,
-    //       data: {
-    //         user: req.user
-    //       }
-    //     });
-    //   });
+            // 直接通过req._id 就能获取到商户的id了
+            res.json({
+                code: 0,
+                data: {
+                    _id: req._id
+                }
+            });
+        }
+        // // 使用auth 验证
+        //   router.get("/token", auth, function(req, res, next) {
+        //     res.json({
+        //       code: 0,
+        //       data: {
+        //         user: req.user
+        //       }
+        //     });
+        //   });
 }
 module.exports = new Merchant()
